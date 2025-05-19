@@ -1,0 +1,6 @@
+QUOTES_DIR = "data/quotes"
+IMAGES_DIR = "data/images"
+OUTPUT_DIR = "output"
+FONT_PATH = "fonts/SuezOne-Regular.ttf"
+INSTAGRAM_ICON_PATH = "assets/instagram.png"
+BRAND_NAME = "STOICISM_IL"

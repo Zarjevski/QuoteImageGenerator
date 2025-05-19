@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: stoic-quotes-backend
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./server/data:/app/data
+      - ./server/output:/app/output
+      - ./server/fonts:/app/fonts
+      - ./server/assets:/app/assets
+
+  client:
+    build:
+      context: ./client
+    container_name: stoic-quotes-frontend
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend
