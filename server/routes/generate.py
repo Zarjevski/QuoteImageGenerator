@@ -8,6 +8,7 @@ generate_bp = Blueprint("generate", __name__)
 @generate_bp.route("/generate-preview", methods=["POST"])
 def preview():
     data = request.json
+    print(data)
     result = generate_image(data)
     return jsonify(result)
 

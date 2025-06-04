@@ -1,3 +1,7 @@
 Flask
 flask-cors
 Pillow
+openai
+python-dotenv
+requests
+schedule

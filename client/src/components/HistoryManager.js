@@ -1,22 +1,43 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { getHistory, deleteImage, downloadImage } from "../api/api";
+import api from "../api/api";
 
 function HistoryManager() {
   const [files, setFiles] = useState([]);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
   const fetchHistory = async () => {
-    const res = await fetch('http://10.100.102.8:5000/history');
-    const data = await res.json();
-    setFiles(data.files || []);
+    try {
+      const res = await getHistory();
+      setFiles(res.data.files || []);
+    } catch (err) {
+      console.error("Error fetching history:", err);
+    }
   };
 
-  const clearHistory = async () => {
-    const res = await fetch('http://10.100.102.8:5000/history', {
-      method: 'DELETE'
-    });
-    const data = await res.json();
-    setMessage(data.message);
-    fetchHistory();
+  const handleDelete = async (filename) => {
+    try {
+      await deleteImage(filename);
+      setMessage(`התמונה נמחקה: ${filename}`);
+      fetchHistory();
+    } catch (err) {
+      console.error("Error deleting image:", err);
+    }
+  };
+
+  const handleDownload = async (filename) => {
+    try {
+      const res = await downloadImage(filename);
+      const blob = new Blob([res.data], { type: "image/png" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Download failed:", err);
+    }
   };
 
   useEffect(() => {
@@ -26,13 +47,21 @@ function HistoryManager() {
   return (
     <div className="history-manager">
       <h2>היסטוריית תמונות</h2>
-      <button onClick={clearHistory}>נקה את תיקיית התמונות</button>
       {message && <p>{message}</p>}
-      <ul>
+      <div className="history-grid">
         {files.map((file, idx) => (
-          <li key={idx}>{file}</li>
+          <div className="history-thumb" key={idx}>
+            <img src={`${api.defaults.baseURL}/preview/${file}`} alt={file} />
+            <div className="overlay">
+              <button onClick={() => handleDownload(file)}>📥</button>
+              <button onClick={() => handleDelete(file)}>🗑️</button>
+            </div>
+          </div>
         ))}
-      </ul>
+      </div>
+      <button onClick={() => deleteImage().then(fetchHistory)}>
+        נקה את תיקיית התמונות
+      </button>
     </div>
   );
 }

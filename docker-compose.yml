@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: stoic-quotes-backend
     ports:
-      - "5000:5000"
+      - "5055:5000"  # External 5055 → Internal 5000
     volumes:
       - ./server/data:/app/data
       - ./server/output:/app/output
@@ -19,7 +19,7 @@ services:
       context: ./client
     container_name: stoic-quotes-frontend
     ports:
-      - "3000:3000"
+      - "3300:3000"  # External 3300 → Internal 3000
     stdin_open: true
     tty: true
     depends_on:

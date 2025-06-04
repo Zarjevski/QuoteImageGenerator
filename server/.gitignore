@@ -6,6 +6,7 @@ __pycache__/
 # Virtual environments
 venv/
 env/
+.env
 
 # Distribution / packaging
 *.egg-info/
@@ -27,3 +28,8 @@ output/
 # OS / system files
 .DS_Store
 Thumbs.db
+
+# DATA
+
+data/images
+data/quotes

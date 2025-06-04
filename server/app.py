@@ -3,6 +3,11 @@ from flask_cors import CORS
 from routes.quote_routes import quote_bp
 from routes.generate import generate_bp
 from routes.manage import manage_bp 
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
 
 app = Flask(__name__)
 CORS(app)

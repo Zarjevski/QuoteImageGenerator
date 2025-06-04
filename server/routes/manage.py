@@ -65,6 +65,15 @@ def list_history():
     files = os.listdir(OUTPUT_DIR)
     return jsonify({"files": files})
 
+@manage_bp.route("/history/<filename>", methods=["DELETE"])
+def delete_single_file(filename):
+    file_path = os.path.join(OUTPUT_DIR, filename)
+    if not os.path.exists(file_path):
+        return jsonify({"error": "File not found"}), 404
+
+    os.remove(file_path)
+    return jsonify({"message": f"Deleted {filename}"})
+
 
 @manage_bp.route("/history", methods=["DELETE"])
 def clear_history():

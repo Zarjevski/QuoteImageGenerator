@@ -1,28 +1,44 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
+import { getThinkers } from "../api/api";
 
-function ThinkerSelector({ onSelect }) {
+function ThinkerSelector({ language, onSelect }) {
   const [thinkers, setThinkers] = useState([]);
+  const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://10.100.102.8:5000/thinkers')
-      .then(res => res.json())
-      .then(data => {
-        setThinkers(data);
+    if (!language) return;
+
+    getThinkers(language)
+      .then((res) => {
+        setThinkers(res.data);
         setLoading(false);
-      });
-  }, []);
+      })
+      .catch(() => setLoading(false));
+  }, [language]);
+
+  const handleSelect = (thinker) => {
+    setSelected(thinker);
+    onSelect(thinker);
+  };
 
   return (
     <div className="thinker-selector">
       <label>בחר הוגה:</label>
-      {loading ? <p>טוען...</p> : (
-        <select onChange={(e) => onSelect(e.target.value)}>
-          <option value="">--</option>
-          {thinkers.map((thinker) => (
-            <option key={thinker} value={thinker}>{thinker}</option>
+      {loading ? (
+        <p>טוען...</p>
+      ) : (
+        <div className="quotes">
+          {thinkers.map((thinker, idx) => (
+            <div
+              key={idx}
+              className={`quote ${selected === thinker ? "active" : ""}`}
+              onClick={() => handleSelect(thinker)}
+            >
+              {thinker}
+            </div>
           ))}
-        </select>
+        </div>
       )}
     </div>
   );
