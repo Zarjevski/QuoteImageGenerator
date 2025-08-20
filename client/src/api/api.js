@@ -1,7 +1,8 @@
 import axios from "axios";
+import { baseURL } from "../constants";
 
 const api = axios.create({
-  baseURL: "http://10.100.102.9:5000", // Adjust if needed
+  baseURL: baseURL // Adjust if needed
 });
 
 // === Thinker Endpoints ===

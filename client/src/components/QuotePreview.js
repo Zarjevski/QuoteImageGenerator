@@ -1,21 +1,37 @@
 import React from "react";
-import { downloadImage } from "../api/api";
+import axios from "axios";
+import Spinner from './Spinner'
+import { baseURL } from "../constants";
 
-function QuotePreview({ loading, previewUrl, filename, quote }) {
-  const handleDownload = async () => {
+function QuotePreview({ loading, setLoading, previewUrl, filename }) {
+  const handleDownload = () => {
     if (!filename) return;
+    const link = document.createElement("a");
+    link.href = `${baseURL}/download/${filename}`;
+    link.download = "quote.png";
+    link.click();
+  };
+
+  const handleVideoDownload = async () => {
+    if (!filename) return alert("📸 לא נוצרה תמונה עדיין");
 
     try {
-      const res = await downloadImage(filename);
-      const blob = new Blob([res.data], { type: "image/png" });
-      const url = window.URL.createObjectURL(blob);
+      setLoading(true)
+      // Request backend to generate video
+      const res = await axios.post(`${baseURL}/generate-video`, {
+        filename: filename,
+      });
+
+      const videoUrl = `${baseURL}:5000/${res.data.video_url}`;
       const link = document.createElement("a");
-      link.href = url;
-      link.download = "quote.png";
+      link.href = videoUrl;
+      link.download = "quote_reel.mp4";
       link.click();
-      window.URL.revokeObjectURL(url);
     } catch (err) {
-      console.error("Download failed:", err);
+      console.error("❌ Video generation failed:", err);
+      alert("⚠️ שגיאה ביצירת הווידאו");
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -23,7 +39,7 @@ function QuotePreview({ loading, previewUrl, filename, quote }) {
     <div className="preview">
       <h2>הצגה מקדימה</h2>
 
-      {loading && <p>טוען...</p>}
+      {loading && <div><Spinner/></div>}
 
       {!loading && !previewUrl && (
         <p style={{ opacity: 0.6, fontStyle: "italic" }}>
@@ -34,7 +50,8 @@ function QuotePreview({ loading, previewUrl, filename, quote }) {
       {!loading && previewUrl && (
         <>
           <img src={previewUrl} alt="preview" />
-          <button onClick={handleDownload}>📥 הורד</button>
+          <button onClick={handleDownload}>📥 הורד תמונה</button>
+          <button onClick={handleVideoDownload}>🎥 יצירת וידאו והורדה</button>
         </>
       )}
     </div>
