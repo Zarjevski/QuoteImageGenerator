@@ -11,7 +11,7 @@ function HistoryManager() {
       const res = await getHistory();
       setFiles(res.data.files || []);
     } catch (err) {
-      console.error("Error fetching history:", err);
+      setMessage("שגיאה בטעינת ההיסטוריה");
     }
   };
 
@@ -21,7 +21,7 @@ function HistoryManager() {
       setMessage(`התמונה נמחקה: ${filename}`);
       fetchHistory();
     } catch (err) {
-      console.error("Error deleting image:", err);
+      setMessage(`שגיאה במחיקת התמונה: ${filename}`);
     }
   };
 
@@ -36,7 +36,7 @@ function HistoryManager() {
       link.click();
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      console.error("Download failed:", err);
+      setMessage(`שגיאה בהורדת התמונה: ${filename}`);
     }
   };
 

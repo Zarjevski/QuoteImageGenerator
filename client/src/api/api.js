@@ -2,8 +2,45 @@ import axios from "axios";
 import { baseURL } from "../constants";
 
 const api = axios.create({
-  baseURL: baseURL // Adjust if needed
+  baseURL: baseURL,
+  timeout: 30000, // 30 seconds timeout
 });
+
+// Request interceptor
+api.interceptors.request.use(
+  (config) => {
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor for error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response) {
+      // Server responded with error status
+      const { status, data } = error.response;
+      if (status === 500) {
+        console.error("Server error:", data?.error || "Internal server error");
+      } else if (status === 404) {
+        console.error("Resource not found:", error.config?.url);
+      } else if (status === 413) {
+        console.error("File too large");
+      }
+    } else if (error.request) {
+      // Request made but no response received
+      console.error("Network error: No response from server");
+      error.message = "שגיאת רשת. אנא בדוק את החיבור.";
+    } else {
+      // Something else happened
+      console.error("Error:", error.message);
+    }
+    return Promise.reject(error);
+  }
+);
 
 // === Thinker Endpoints ===
 export const getThinkers = (lang) => api.get(`/thinkers/${lang}`);

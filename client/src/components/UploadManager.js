@@ -40,8 +40,9 @@ function UploadManager() {
 
       setStatus(`הועלו ${uploadedImages} תמונות עבור ${thinker}`);
     } catch (err) {
-      console.error("Upload failed:", err);
-      alert("העלאה נכשלה");
+      const errorMessage = err.response?.data?.error || err.message || "העלאה נכשלה";
+      alert(`שגיאה: ${errorMessage}`);
+      setStatus("העלאה נכשלה");
     }
 
     setProgress(0);

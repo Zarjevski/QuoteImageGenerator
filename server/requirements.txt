@@ -1,10 +1,22 @@
+# --- Flask Core ---
 flask
 flask-cors
-Pillow
-openai
 python-dotenv
 requests
 schedule
-dotenv
-ffmpeg-python
 
+# --- Image Handling ---
+pillow
+
+# --- AI / API Integration ---
+openai
+
+# --- Video Generation (MoviePy) ---
+moviepy==1.0.3
+imageio[ffmpeg]
+numpy
+decorator
+proglog
+
+# --- Misc Utilities ---
+ffmpeg-python

@@ -5,6 +5,7 @@ function Navbar({ language, onLanguageChange }) {
   return (
     <nav className="navbar">
       <div className="logo">
+        <span style={{ fontSize: '1.2em', marginRight: '4px' }}>🧠</span>
         StoicQuotes
       </div>
 

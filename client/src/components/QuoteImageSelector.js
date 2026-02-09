@@ -15,32 +15,48 @@ function QuoteImageSelector({
   const [quotes, setQuotes] = useState([]);
   const [images, setImages] = useState([]);
   const [selectedQuote, setSelectedQuote] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!thinker || !language) return;
 
+    setLoading(true);
+    setError(null);
     const fileKey = thinker.toLowerCase().replace(/ /g, "_");
 
-    getQuotes(language, fileKey)
-      .then((res) => {
-        const data = res.data;
-        const jsonKey = Object.keys(data)[0];
-        setDisplayName(jsonKey); // Set "ברק אובמה" etc.
-        setQuotes(data[jsonKey]);
-      })
-      .catch(() => {
-        setQuotes([]);
-        setDisplayName(null);
-      });
-
-    if (imageFolder) {
-      getImages(imageFolder)
-        .then((res) => setImages(res.data))
-        .catch(() => setImages([]));
-    }
+    Promise.all([
+      getQuotes(language, fileKey)
+        .then((res) => {
+          const data = res.data;
+          if (data && typeof data === "object") {
+            const jsonKey = Object.keys(data)[0];
+            setDisplayName(jsonKey); // Set "ברק אובמה" etc.
+            setQuotes(Array.isArray(data[jsonKey]) ? data[jsonKey] : []);
+          } else {
+            setQuotes([]);
+            setDisplayName(null);
+          }
+        })
+        .catch((err) => {
+          setError("שגיאה בטעינת הציטוטים");
+          setQuotes([]);
+          setDisplayName(null);
+        }),
+      imageFolder
+        ? getImages(imageFolder)
+            .then((res) => setImages(Array.isArray(res.data) ? res.data : []))
+            .catch((err) => {
+              setError("שגיאה בטעינת התמונות");
+              setImages([]);
+            })
+        : Promise.resolve(),
+    ]).finally(() => {
+      setLoading(false);
+    });
 
     setSelectedQuote(null);
-  }, [thinker, language, imageFolder]);
+  }, [thinker, language, imageFolder, setDisplayName]);
 
   const handleQuoteSelect = (quote) => {
     setSelectedQuote(quote);
@@ -51,19 +67,37 @@ function QuoteImageSelector({
     onImageSelect(img);
   };
 
+  if (loading) {
+    return (
+      <div className="selector-container">
+        <p style={{ opacity: 0.6 }}>טוען...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="selector-container">
+        <p style={{ color: "#ff6b6b" }}>{error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="selector-container">
-      <QuoteSelector
-        quotes={quotes}
-        selectedQuote={selectedQuote}
-        onSelect={handleQuoteSelect}
-      />
-      <ImageSlider
-        images={images}
-        selectedImage={selectedImage}
-        onSelect={handleImageSelect}
-        thinker={imageFolder} // Use English folder name
-      />
+      <div className="quotes-images-wrapper">
+        <QuoteSelector
+          quotes={quotes}
+          selectedQuote={selectedQuote}
+          onSelect={handleQuoteSelect}
+        />
+        <ImageSlider
+          images={images}
+          selectedImage={selectedImage}
+          onSelect={handleImageSelect}
+          thinker={imageFolder} // Use English folder name
+        />
+      </div>
     </div>
   );
 }

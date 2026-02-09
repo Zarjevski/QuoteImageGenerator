@@ -28,7 +28,8 @@ function CreatePage({ language }) {
       setPreviewUrl(`${baseURL}/${data.preview_url}`);
       setPreviewFilename(data.filename);
     } catch (err) {
-      console.error("❌ Failed to generate preview", err);
+      const errorMessage = err.response?.data?.error || err.message || "שגיאה ביצירת התמונה";
+      alert(`שגיאה: ${errorMessage}`);
     } finally {
       setLoadingPreview(false);
     }
@@ -46,15 +47,14 @@ function CreatePage({ language }) {
     <div className="container">
       <ThinkerSelector
         language={language}
-        onSelect={(thinkerFileName, displayName) => {
-          const folderName = thinkerFileName
-            .split("_")
-            .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-            .join(" "); // converts 'barack_obama' → 'Barack Obama'
+        onSelect={(thinkerDisplayName) => {
+          // Convert display name (e.g., "Barack Obama") to file key (e.g., "barack_obama")
+          const fileKey = thinkerDisplayName.toLowerCase().replace(/\s+/g, "_");
+          const folderName = thinkerDisplayName; // Use display name as folder name
 
-          setSelectedThinker(thinkerFileName);
+          setSelectedThinker(fileKey);
           setImageFolder(folderName);
-          setDisplayName(displayName);
+          setDisplayName(""); // Will be set by QuoteImageSelector when quotes load
           setSelectedQuote(null);
           setSelectedImage(null);
           setPreviewUrl(null);

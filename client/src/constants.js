@@ -1,1 +1,2 @@
-export const baseURL = "http://10.100.102.15:5000"
+// Get base URL from environment variable or use default
+export const baseURL = process.env.REACT_APP_API_URL || "http://127.0.0.1:5000";
