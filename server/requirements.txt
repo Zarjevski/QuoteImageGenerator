@@ -9,7 +9,7 @@ schedule
 pillow
 
 # --- AI / API Integration ---
-openai
+google-generativeai
 
 # --- Video Generation (MoviePy) ---
 moviepy==1.0.3

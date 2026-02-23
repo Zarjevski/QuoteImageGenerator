@@ -2,7 +2,7 @@ import random
 import os
 import json
 from services.image_service import generate_image
-from services.openai_service import generate_caption
+from services.gemini_service import generate_caption
 from services.instagram_service import post_to_instagram
 
 def get_random_thinker(lang="he"):

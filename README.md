@@ -83,7 +83,7 @@ Create a `.env` file in the `server` directory:
 FLASK_DEBUG=False
 FLASK_HOST=0.0.0.0
 FLASK_PORT=5000
-OPENAI_API_KEY=your_key_here  # Optional, for AI features
+GEMINI_API_KEY=your_gemini_api_key_here  # Optional, for AI features
 ```
 
 4. **Run the server:**
